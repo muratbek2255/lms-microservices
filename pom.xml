@@ -37,7 +37,9 @@
 		<module>user-service</module>
 		<module>payment-service</module>
 		<module>consumer-service</module>
+		<module>config-service</module>
 		<module>chat-service</module>
+		<module>api-gateway</module>
 	</modules>
 
 	<dependencies>
