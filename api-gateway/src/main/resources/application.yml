@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+management:
+  endpoint.gateway.enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: ERROR
+    reactor.netty.http.client: ERROR
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    config:
+      enabled: false
+
+    gateway:
+      global-filter:
+        LoggingGlobalFilter
+
+      global-cors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+            allowedHeaders: "*"
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
