@@ -30,7 +30,6 @@
 	<modules>
 		<module>discovery-server</module>
 		<module>authentication-service</module>
-		<module>api-gateway</module>
 		<module>course-service</module>
 		<module>library-service</module>
 		<module>exam-service</module>

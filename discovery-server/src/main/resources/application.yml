@@ -1,0 +1,16 @@
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+spring:
+  application:
+    name: discovery-server
+  cloud:
+    compatibility-verifier:
+      enabled: false
+
+server:
+  port: 8761
