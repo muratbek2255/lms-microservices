@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3"
 
 services:
   zookeeper:
@@ -44,7 +44,7 @@ services:
       - discovery-server
 
   authentication-postgres:
-    image: postgres:14.0-alpine
+    image: postgres:15.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     networks:
@@ -56,15 +56,164 @@ services:
     command: -p 5431
     restart: always
 
+  chat-postgres:
+    image: postgres:15.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - my-network
+    env_file:
+      - chat-service/.env
+    ports:
+      - "5431:5431"
+    command: -p 5431
+    restart: always
+
+  course-postgres:
+    image: postgres:15.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - my-network
+    env_file:
+      - course-service/.env
+    ports:
+      - "5432:5432"
+    command: -p 5432
+    restart: always
+
+  exam-postgres:
+    image: postgres:15.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - my-network
+    env_file:
+      - exam-service/.env
+    ports:
+      - "5433:5433"
+    command: -p 5433
+    restart: always
+
+  library-postgres:
+    image: postgres:15.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - my-network
+    env_file:
+      - library-service/.env
+    ports:
+      - "5434:5434"
+    command: -p 5434
+    restart: always
+
+  payment-postgres:
+    image: postgres:15.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - my-network
+    env_file:
+      - payment-service/.env
+    ports:
+      - "5434:5434"
+    command: -p 5434
+    restart: always
+
+  user-postgres:
+    image: postgres:15.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - my-network
+    env_file:
+      - user-service/.env
+    ports:
+      - "5431:5431"
+    command: -p 5431
+    restart: always
+
   authentication-service:
     image: muratbek2255muratkanov/app.jar
     environment:
         - SPRING_PROFILES_ACTIVE=docker
-        - SPRING_DATASOURCE_URL=jdbc:postgresql://authentication-postgres:5431/your_database_name
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://authentication-postgres:5431/new_project_db
     depends_on:
         - authentication-postgres
         - discovery-server
         - api-gateway
+
+  chat-service:
+    image: muratbek2255muratkanov/chat.jar
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://chat-postgres:5431/new_project_db
+    depends_on:
+      - chat-postgres
+      - discovery-server
+      - api-gateway
+
+  consumer-service:
+    image: muratbek2255muratkanov/consumer.jar
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - discovery-server
+      - broker
+      - zookeeper
+
+  course-service:
+    image: muratbek2255muratkanov/course.jar
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://course-postgres:5431/course_db
+    depends_on:
+      - course-postgres
+      - discovery-server
+      - api-gateway
+
+  exam-service:
+    image: muratbek2255muratkanov/exam.jar
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://exam-postgres:5431/exam_db
+    depends_on:
+      - exam-postgres
+      - discovery-server
+      - api-gateway
+
+  library-service:
+    image: muratbek2255muratkanov/library.jar
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://library-postgres:5431/book_library
+    depends_on:
+      - library-postgres
+      - discovery-server
+      - api-gateway
+
+  payment-service:
+    image: muratbek2255muratkanov/payment.jar
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://payment-postgres:5431/book_library
+    depends_on:
+      - payment-postgres
+      - discovery-server
+      - api-gateway
+      - zookeeper
+      - broker
+
+  user-service:
+    image: muratbek2255muratkanov/user.jar
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-postgres:5431/new_project_db
+    depends_on:
+      - user-postgres
+      - discovery-server
+      - api-gateway
 
 volumes:
   postgres_data:
