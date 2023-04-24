@@ -1,0 +1,30 @@
+spring:
+
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/your_database
+    driver-class-name: org.postgresql.Driver
+    username: your_username
+    password: your_password
+
+
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    config:
+      enabled: false
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  main:
+    allow-bean-definition-overriding: true
+
+eureka:
+  instance:
+    hostname: localhost
+
+server:
+  port: 8082
+

@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/your_database
+    driver-class-name: org.postgresql.Driver
+    username: your_username
+    password: your_password
+
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    config:
+      enabled: false
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  liquibase:
+    change-log: classpath:db/db.changelog-master.xml
+    url: jdbc:postgresql://127.0.0.1:5432/your_database
+    user: your_username
+    password: your_password
+
+server:
+  port: 8081
+
+
+secret_key: 6B58703273357638782F413F4428472B4B6250655368566D597133743677397A
+
+app:
+  jwt:
+    expiration: 864000000
+
+application:
+  security:
+    jwt:
+      refresh-token:
+        expiration: 604800000
+
+eureka:
+  client:
+    service-url:
+      default-zone:
+        http://localhost:8761/eureka
