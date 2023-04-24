@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="alter-table-refresh_token-schema-auth-add-constraint-to-user_devices_id" author="murat_q">
+        <sql>
+            ALTER TABLE auth.user_device ADD CONSTRAINT fk_devices_user FOREIGN KEY(user_id) REFERENCES auth.users(id);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
