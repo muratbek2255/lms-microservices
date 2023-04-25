@@ -23,7 +23,7 @@ public class Choice {
     @Column(name = "id")
     Integer id;
 
-    @Column(name = "choice_text")
+    @Column(name = "choise_text")
     String choiceText;
 
     @Column(name = "correct")

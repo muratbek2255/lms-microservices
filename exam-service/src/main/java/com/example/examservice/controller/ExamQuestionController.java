@@ -6,10 +6,7 @@ import com.example.examservice.service.ExamQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -24,8 +21,9 @@ public class ExamQuestionController {
     }
 
     @PostMapping("/takeExam")
-    public ResponseEntity<String> takeExam(@Param("password") String password, @RequestBody StudentAnswerRequest studentAnswerRequest) {
+    public ResponseEntity<String> takeExam(@RequestParam("password") String password, @RequestParam("userId") Integer userId,
+                                           @RequestBody StudentAnswerRequest studentAnswerRequest) {
 
-        return ResponseEntity.status(201).body(examQuestionService.takeExam(password, studentAnswerRequest));
+        return ResponseEntity.status(201).body(examQuestionService.takeExam(password, userId, studentAnswerRequest));
     }
 }
