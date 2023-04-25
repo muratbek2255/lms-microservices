@@ -1,12 +1,7 @@
-package com.example.examservice.dto;
+package com.example.userservice;
 
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 
 @Getter
 @Setter
