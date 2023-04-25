@@ -2,10 +2,10 @@ package com.example.examservice.service;
 
 
 import com.example.examservice.dto.StudentAnswerRequest;
-import com.example.examservice.entity.Choice;
 import com.example.examservice.entity.ExamQuestion;
 import com.example.examservice.entity.Score;
 import com.example.examservice.entity.StudentAnswer;
+import com.example.examservice.repository.ChoiceRepository;
 import com.example.examservice.repository.ExamQuestionRepository;
 import com.example.examservice.repository.ScoreRepository;
 import com.example.examservice.repository.StudentAnswerRepository;
@@ -24,14 +24,17 @@ public class ExamQuestionService {
 
     private final ScoreRepository scoreRepository;
 
+    private final ChoiceRepository choiceRepository;
+
     @Autowired
-    public ExamQuestionService(StudentAnswerRepository studentAnswerRepository, ExamQuestionRepository examQuestionRepository, ScoreRepository scoreRepository) {
+    public ExamQuestionService(StudentAnswerRepository studentAnswerRepository, ExamQuestionRepository examQuestionRepository, ScoreRepository scoreRepository, ChoiceRepository choiceRepository) {
         this.studentAnswerRepository = studentAnswerRepository;
         this.examQuestionRepository = examQuestionRepository;
         this.scoreRepository = scoreRepository;
+        this.choiceRepository = choiceRepository;
     }
 
-    public String takeExam(String password, StudentAnswerRequest studentAnswerRequest) {
+    public String takeExam(String password, Integer userId, StudentAnswerRequest studentAnswerRequest) {
 
         List<ExamQuestion> examQuestions = examQuestionRepository.findByExamPassword(password);
 
@@ -40,19 +43,20 @@ public class ExamQuestionService {
                     StudentAnswer studentAnswer = new StudentAnswer();
 
                     studentAnswer.setExam(examQuestion);
-                    studentAnswer.setAnswer(studentAnswerRequest.getAnswer());
+                    studentAnswer.setUserId(userId);
+                    studentAnswer.setAnswer(studentAnswerRequest.getChoise_text());
 
                     studentAnswerRepository.save(studentAnswer);
 
                     Score score = new Score();
 
-                    Choice choice = new Choice();
 
-                    if (studentAnswer.getExam().getQuestion().getQuestionText().equals(choice.getChoiceText())) {
-
-                        score.setScore(score.getScore() + 1);
-                    }
                     score.setExam(examQuestion.getExam());
+                    score.setUserId(userId);
+
+                    if (choiceRepository.findByChoiceText(studentAnswerRequest.getChoise_text()).getCorrect().equals(Boolean.TRUE)) {
+                        score.setScore(+1);
+                    }
 
                     scoreRepository.save(score);
                 }

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(schema = "auth", name = "users")
-public class User{
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
