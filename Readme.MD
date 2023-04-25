@@ -6,7 +6,7 @@ It is a simple educational portal with courses, exams, chat and payment
 
 ```bash
 git clone https://github.com/muratbek2255/lms.microservices.git
-cd cinematica-demo
+cd lms.micrservices
 ```
 
 ## Create Postgresql DB
