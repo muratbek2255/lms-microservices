@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+
 @Entity
 @Getter
 @Setter
@@ -23,15 +24,15 @@ public class UserDevice extends DateAudit {
     @Column(name = "id")
     Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     User user;
 
     @Column(name = "device_type")
     @Enumerated(value = EnumType.STRING)
     DeviceType deviceType;
 
-    @Column(name = "device_id", nullable = false)
+    @Column(name = "device_id")
     String deviceId;
 
     @OneToOne(optional = false, mappedBy = "userDevice")
