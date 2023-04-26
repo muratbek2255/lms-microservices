@@ -14,9 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.OngoingStubbing;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -80,7 +78,8 @@ class CourseServiceImplTest {
         courseRequest.setDescription("Is be famous course in the world");
         courseRequest.setCategoryRequest(categoryRequest);
 
-        Course course = courseRepository.getById(courseRequest.getId());
+        Course course = new Course();
+        when(courseRepository.getById(courseRequest.getId())).thenReturn(course);
 
         Category category = categoryRepository.getById(courseRequest.getCategoryRequest().getId());
 
