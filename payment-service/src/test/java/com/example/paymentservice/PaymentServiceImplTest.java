@@ -9,15 +9,16 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
 class PaymentServiceImplTest {
     @Mock
     private PaymentRepository paymentRepository;
@@ -25,9 +26,11 @@ class PaymentServiceImplTest {
     @Mock
     private CourseClient courseClient;
 
+    @Mock
+    private KafkaTemplate<String, String> kafkaTemplate;
+
     @InjectMocks
     private PaymentServiceImpl paymentService;
-
 
     @BeforeEach
     void init() {
@@ -44,7 +47,7 @@ class PaymentServiceImplTest {
 
         assertEquals("Order is checked!", result);
 
-        Mockito.verify(paymentRepository, Mockito.times(0)).save(Mockito.any(Payment.class));
+        verify(paymentRepository, Mockito.times(0)).save(any(Payment.class));
     }
 
     @Test
@@ -57,7 +60,7 @@ class PaymentServiceImplTest {
 
         assertEquals("Error, you have problem with sumOfFavour or AccountCheck!", result);
 
-        Mockito.verify(paymentRepository, Mockito.times(0)).save(Mockito.any(Payment.class));
+        verify(paymentRepository, Mockito.times(0)).save(any(Payment.class));
     }
 
     @Test
@@ -70,29 +73,40 @@ class PaymentServiceImplTest {
 
         assertEquals("Error, you have problem with sumOfFavour or AccountCheck!", result);
 
-        Mockito.verify(paymentRepository, Mockito.times(0)).save(Mockito.any(Payment.class));
+        verify(paymentRepository, Mockito.times(0)).save(any(Payment.class));
     }
 
     @Test
     void testOnCreatePaymentOrNot() {
 
-        PaymentRequest paymentCheckRequest = new PaymentRequest();
+        PaymentRequest paymentRequest = new PaymentRequest();
+        paymentRequest.setPrice(100);
+        paymentRequest.setAccountCheck("testAccount");
 
-        Payment payment = paymentRepository.getById(1);
+        // Create a Payment object with test data
+        Payment payment = new Payment();
+        payment.setId(1);
+        payment.setIsChecked(true);
 
-        payment.setStatus(PaymentStatus.STATUS_CREATED);
-        payment.setCreated_at(Timestamp.from(Instant.now()));
-        payment.setFinished(Boolean.FALSE);
-        payment.setSumOfFavour(paymentCheckRequest.getPrice());
-        payment.setAccountCheck(paymentCheckRequest.getAccountCheck());
+        // Mock the behavior of PaymentRepository to return the Payment object
+        when(paymentRepository.getById(1)).thenReturn(payment);
 
-        paymentCheckRequest.setPrice(payment.getSumOfFavour());
-        paymentCheckRequest.setAccountCheck(payment.getAccountCheck());
+        // Create an instance of PaymentServiceImpl using the mocked dependencies
+        paymentService = new PaymentServiceImpl(paymentRepository, courseClient, kafkaTemplate);
 
-        String result = paymentService.addPayment(paymentCheckRequest, 1);
+        // Call the addPayment method and verify the result
+        String result = paymentService.addPayment(paymentRequest, 1);
+        assertEquals("Payment Created", result);
 
-        assertEquals("You have some with problem with AccountCheck or SumOfFavour", result);
+        // Verify that the Payment object was updated and saved to the PaymentRepository
+        verify(payment, Mockito.times(3)).setStatus(PaymentStatus.STATUS_CREATED);
+        verify(payment).setCreated_at(any(Timestamp.class));
+        verify(payment).setFinished(false);
+        verify(payment).setSumOfFavour(100);
+        verify(payment).setAccountCheck("testAccount");
+        verify(paymentRepository).save(payment);
 
-        Mockito.verify(paymentRepository, Mockito.times(0)).save(Mockito.any(Payment.class));
+        // Verify that a message was sent to the Kafka topic
+        verify(kafkaTemplate).send(eq("lms"), contains("Payment id: 1 and his payment status: CREATED"));
     }
 }
