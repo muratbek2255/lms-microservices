@@ -83,22 +83,17 @@ class PaymentServiceImplTest {
         paymentRequest.setPrice(100);
         paymentRequest.setAccountCheck("testAccount");
 
-        // Create a Payment object with test data
         Payment payment = new Payment();
         payment.setId(1);
         payment.setIsChecked(true);
 
-        // Mock the behavior of PaymentRepository to return the Payment object
         when(paymentRepository.getById(1)).thenReturn(payment);
 
-        // Create an instance of PaymentServiceImpl using the mocked dependencies
         paymentService = new PaymentServiceImpl(paymentRepository, courseClient, kafkaTemplate);
 
-        // Call the addPayment method and verify the result
         String result = paymentService.addPayment(paymentRequest, 1);
         assertEquals("Payment Created", result);
 
-        // Verify that the Payment object was updated and saved to the PaymentRepository
         verify(payment, Mockito.times(3)).setStatus(PaymentStatus.STATUS_CREATED);
         verify(payment).setCreated_at(any(Timestamp.class));
         verify(payment).setFinished(false);
@@ -106,7 +101,6 @@ class PaymentServiceImplTest {
         verify(payment).setAccountCheck("testAccount");
         verify(paymentRepository).save(payment);
 
-        // Verify that a message was sent to the Kafka topic
         verify(kafkaTemplate).send(eq("lms"), contains("Payment id: 1 and his payment status: CREATED"));
     }
 }
