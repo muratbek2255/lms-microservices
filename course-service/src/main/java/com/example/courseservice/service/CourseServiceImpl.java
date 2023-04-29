@@ -78,7 +78,7 @@ public class CourseServiceImpl implements CourseService {
 
         CourseResponse courseResponse = new CourseResponse();
 
-        if (course.getIsPayment().equals(Boolean.TRUE)) {
+        if (course.getIsPayment()) {
 
             courseResponse.setId(course.getId());
             courseResponse.setName(course.getName());

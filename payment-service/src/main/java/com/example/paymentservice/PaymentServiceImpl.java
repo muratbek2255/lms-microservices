@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Date;
 
+
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
@@ -60,7 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
         kafkaTemplate.send("lms", "Payment id: " + payment.getId() +
                 " and his payment status: " + payment.getStatus());
 
-        if(payment.getIsChecked().equals(Boolean.TRUE)) {
+        if(payment.getIsChecked()) {
 
             payment.setStatus(PaymentStatus.STATUS_CREATED);
             payment.setCreated_at(Timestamp.from(Instant.now()));
@@ -84,7 +85,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment.setFinished(Boolean.TRUE);
 
-        if(payment.getFinished() == Boolean.TRUE) {
+        if(payment.getFinished()) {
             payment.setStatus(PaymentStatus.STATUS_SUCCESS);
 
             courseClient.updateIsPaymentField(payment.getCourseId());
